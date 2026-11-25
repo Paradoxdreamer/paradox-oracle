@@ -1,88 +1,76 @@
 # Paradox Oracle
 
-Active Directory relationship mapping, attack path discovery, and privilege escalation graphing.
+Active Directory attack path mapping and privilege escalation graphing (BloodHound ecosystem).
 
-Curated Paradox guide + usage notes for BloodHound / SharpHound ecosystem, focused on terminal & device workflows.
+Paradox operator kit focused on practical collection + analysis workflows.
 
 **Upstream:** [SpecterOps/BloodHound](https://github.com/SpecterOps/BloodHound)
 
 ---
 
-## What it does
+## Files
 
-- Collects AD data (users, groups, sessions, ACLs, trusts, etc.)
-- Builds a graph of attack paths
-- Identifies shortest paths to Domain Admin / high value targets
-- Supports BloodHound CE (Community Edition) and legacy
-
----
-
-## Environments
-
-| Platform     | Support |
-|--------------|---------|
-| Linux        | Excellent (Docker recommended) |
-| Windows      | Native SharpHound collectors |
-| Termux       | Possible for analysis (Neo4j + BloodHound UI is heavy) |
-| Docker       | Preferred |
+| File | Purpose |
+|------|---------|
+| `install-linux.sh` | Basic Linux dependency + clone helper |
+| `install-termux.sh` | Termux reality check + light tooling |
+| `collect-tips.md` | SharpHound collection commands and tips |
+| `README.md` | This file |
 
 ---
 
-## Quick Start — Docker (recommended)
+## Recommended Workflow
+
+### 1. Collection (Windows)
+
+Use SharpHound or the BloodHound CE collector on a domain-joined host (or with proper credentials).
+
+See `collect-tips.md` for common command lines.
+
+### 2. Analysis
+
+**Best option: BloodHound CE via Docker**
 
 ```bash
-# Pull official or community images
-docker pull specterops/bloodhound
-
-# Or use the full stack
 git clone https://github.com/SpecterOps/BloodHound.git
 cd BloodHound
 docker compose up
 ```
 
-Access the UI usually at http://localhost:8080
+Then open the web UI (usually https://localhost:8080 or the port shown).
+
+Upload the zip produced by the collector and start querying.
 
 ---
 
-## Data Collection (SharpHound)
+## Termux Notes
 
-On a domain-joined Windows host (or from Linux with proper tooling):
-
-```powershell
-# Classic SharpHound
-.\SharpHound.exe -c All
-
-# Or the newer BloodHound CE collector
-```
-
-Upload the generated zip into the BloodHound UI.
+Full Neo4j + BloodHound UI is not practical on Termux.  
+Collect on Windows → move the data → analyze on a real Linux box / VPS / Docker host.
 
 ---
 
-## Termux / Mobile Notes
-
-- Running the full Neo4j + web UI on Termux is resource heavy.
-- Better approach: collect data on Windows, transfer the zip, analyze on a real Linux box or cloud instance.
-- You can run `neo4j` in Termux with enough RAM, but expect pain.
-
----
-
-## Linux Native-ish
+## Quick Commands
 
 ```bash
-# Install Neo4j + BloodHound CE
-# Follow official SpecterOps docs for the current CE release
-
-sudo apt install neo4j
-# then configure and start
+# After cloning this repo
+chmod +x install-linux.sh install-termux.sh
+./install-linux.sh
 ```
+
+---
+
+## Operational Notes
+
+Only run collection and analysis against environments you are authorized to test.
 
 ---
 
 ## Paradox Collection
 
-- **Paradox Sovereign** — C2 framework
-- **Paradox Oracle** — AD graph & attack paths (this repo)
-- More coming
-
-Use only on authorized networks.
+- Paradox Sovereign → Havoc
+- Paradox Alloy → Sliver
+- Paradox Phantom → Evilginx
+- **Paradox Oracle** → BloodHound (this)
+- Paradox Packet → Impacket
+- + more
